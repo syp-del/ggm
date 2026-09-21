@@ -74,3 +74,18 @@ body {
 .hero-marquee-track:hover {
   animation-play-state: paused;
 }
+
+@keyframes firework-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.4);
+    opacity: 0;
+  }
+}
+
+.firework-particle {
+  animation: firework-burst 1.2s ease-out forwards;
+}

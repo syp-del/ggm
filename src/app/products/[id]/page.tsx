@@ -8,6 +8,8 @@ import {
   requestPurchase,
   cancelPurchaseRequest,
 } from "@/app/actions/products";
+import { toggleLike } from "@/app/actions/likes";
+import { addComment, deleteComment } from "@/app/actions/comments";
 import { formatPrice } from "@/lib/format";
 import { productImageUrl, isPlaceholderImageUrl } from "@/lib/images";
 import { PRODUCT_STATUSES } from "@/lib/categories";
@@ -26,7 +28,7 @@ export default async function ProductDetailPage({
   const { data: product } = await supabase
     .from("products")
     .select(
-      `id, title, description, price, category, status, image_path, region, seller_id, buyer_id,
+      `id, title, description, price, category, status, image_path, region, seller_id, buyer_id, like_count,
        seller:profiles!products_seller_id_fkey(nickname),
        buyer:profiles!products_buyer_id_fkey(nickname)`
     )
@@ -43,6 +45,23 @@ export default async function ProductDetailPage({
     (product.seller as unknown as { nickname: string } | null)?.nickname ?? "알수없음";
   const buyerNickname =
     (product.buyer as unknown as { nickname: string } | null)?.nickname ?? null;
+
+  let hasLiked = false;
+  if (user) {
+    const { data: likeRow } = await supabase
+      .from("product_likes")
+      .select("product_id")
+      .eq("product_id", id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    hasLiked = !!likeRow;
+  }
+
+  const { data: comments } = await supabase
+    .from("product_comments")
+    .select("id, content, created_at, author_id, author:profiles!product_comments_author_id_fkey(nickname)")
+    .eq("product_id", id)
+    .order("created_at", { ascending: true });
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
@@ -73,9 +92,23 @@ export default async function ProductDetailPage({
         </div>
         <h1 className="text-lg font-bold text-zinc-900">{product.title}</h1>
         <p className="text-xl font-bold text-zinc-900">{formatPrice(product.price)}</p>
-        <span className="w-fit rounded-full bg-orange-50 px-2 py-0.5 text-xs font-medium text-orange-600">
-          {product.status}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="w-fit rounded-full bg-orange-50 px-2 py-0.5 text-xs font-medium text-orange-600">
+            {product.status}
+          </span>
+          <form action={toggleLike.bind(null, product.id)}>
+            <button
+              type="submit"
+              className={`flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition ${
+                hasLiked
+                  ? "border-pink-200 bg-pink-50 text-pink-600"
+                  : "border-zinc-200 text-zinc-500 hover:bg-zinc-50"
+              }`}
+            >
+              {hasLiked ? "❤️" : "🤍"} {product.like_count}
+            </button>
+          </form>
+        </div>
         <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-700">
           {product.description || "설명이 없어요."}
         </p>
@@ -164,6 +197,64 @@ export default async function ProductDetailPage({
           </div>
         </>
       )}
+
+      <hr className="mt-6 border-t border-zinc-200" />
+
+      <div className="mt-4 flex flex-col gap-3">
+        <h2 className="text-sm font-bold text-zinc-900">
+          댓글 {comments?.length ?? 0}개
+        </h2>
+
+        {comments && comments.length > 0 ? (
+          <ul className="flex flex-col gap-3">
+            {comments.map((comment) => {
+              const authorNickname =
+                (comment.author as unknown as { nickname: string } | null)?.nickname ?? "알수없음";
+              const canDelete = user?.id === comment.author_id;
+              return (
+                <li key={comment.id} className="flex flex-col gap-0.5 rounded-lg bg-zinc-50 px-3 py-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-zinc-700">{authorNickname}</span>
+                    {canDelete && (
+                      <form action={deleteComment.bind(null, product.id, comment.id)}>
+                        <button type="submit" className="text-xs text-zinc-400 hover:text-red-500">
+                          삭제
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                  <p className="whitespace-pre-wrap text-sm text-zinc-700">{comment.content}</p>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="text-sm text-zinc-400">아직 댓글이 없어요.</p>
+        )}
+
+        {user ? (
+          <form action={addComment.bind(null, product.id)} className="flex gap-2">
+            <input
+              type="text"
+              name="content"
+              placeholder="댓글을 남겨보세요"
+              maxLength={500}
+              required
+              className="flex-1 rounded-lg border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-orange-400"
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-orange-600"
+            >
+              등록
+            </button>
+          </form>
+        ) : (
+          <Link href="/login" className="text-sm font-medium text-orange-600">
+            로그인하고 댓글 남기기
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

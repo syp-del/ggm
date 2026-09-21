@@ -62,6 +62,10 @@ export default async function SignupPage({
           로그인
         </Link>
       </p>
+
+      <Link href="/" className="text-center text-sm text-zinc-400 underline">
+        회원가입 없이 둘러보기
+      </Link>
     </div>
   );
 }

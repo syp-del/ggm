@@ -20,7 +20,7 @@ export default function ProductCard({ id, title, price, status, imagePath, regio
       href={`/products/${id}`}
       className="flex flex-col gap-2 rounded-xl transition hover:opacity-90"
     >
-      <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-zinc-100">
+      <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-zinc-100 bg-zinc-100">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -43,7 +43,7 @@ export default function ProductCard({ id, title, price, status, imagePath, regio
       </div>
       <div className="flex flex-col gap-0.5">
         <p className="line-clamp-1 text-sm text-zinc-800">{title}</p>
-        <p className="text-sm font-semibold text-zinc-900">{formatPrice(price)}</p>
+        <p className="text-base font-bold tracking-tight text-zinc-900">{formatPrice(price)}</p>
         {region && <p className="text-xs text-zinc-400">📍 {region}</p>}
       </div>
     </Link>

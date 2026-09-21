@@ -46,6 +46,7 @@ export default async function Home({
     .select("id, title, price, image_path")
     .eq("status", "판매중")
     .not("image_path", "is", null)
+    .order("like_count", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(8);
 
@@ -63,7 +64,7 @@ export default async function Home({
       <hr className="mb-4 border-t border-zinc-200" />
 
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-zinc-900">우리 동네 중고거래</h1>
+        <h1 className="text-xl font-extrabold tracking-tight text-zinc-900">우리 동네 중고거래</h1>
         <Link
           href="/products/new"
           className="rounded-full bg-orange-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-orange-600"

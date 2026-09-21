@@ -29,7 +29,10 @@ export default async function Header() {
   return (
     <header className="sticky top-0 z-10 border-b border-orange-100 bg-white/90 backdrop-blur">
       <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-1.5 text-lg font-bold text-orange-600">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 text-lg font-extrabold tracking-tight text-orange-600"
+        >
           <span aria-hidden>🍆</span>
           <span>가지가지 마켓</span>
         </Link>

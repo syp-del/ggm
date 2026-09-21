@@ -29,7 +29,7 @@ export default function HeroCarousel({ items }: { items: HeroItem[] }) {
   return (
     <div className="relative mb-5 -mx-4 overflow-hidden sm:-mx-0 sm:rounded-2xl">
       <span className="absolute left-4 top-3 z-10 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-orange-600 shadow sm:left-3">
-        🔥 조회가 많은 핫한 상품
+        ❤️ 좋아요 많은 인기 상품
       </span>
 
       <div className="relative h-56 w-full overflow-hidden sm:h-72">

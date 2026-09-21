@@ -3,6 +3,49 @@
 import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "ggm_event_popup_dismissed_date";
+const FIREWORK_EMOJIS = ["✨", "🎉", "🎊", "💥"];
+
+type Particle = { id: number; dx: number; dy: number; emoji: string; delay: number };
+
+function Fireworks() {
+  const [particles, setParticles] = useState<Particle[]>([]);
+
+  useEffect(() => {
+    const next = Array.from({ length: 40 }, (_, i) => {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 80 + Math.random() * 220;
+      return {
+        id: i,
+        dx: Math.cos(angle) * distance,
+        dy: Math.sin(angle) * distance,
+        emoji: FIREWORK_EMOJIS[i % FIREWORK_EMOJIS.length],
+        delay: Math.random() * 0.3,
+      };
+    });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setParticles(next);
+  }, []);
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[60] overflow-hidden">
+      {particles.map((p) => (
+        <span
+          key={p.id}
+          className="firework-particle absolute left-1/2 top-1/3 text-2xl"
+          style={
+            {
+              "--dx": `${p.dx}px`,
+              "--dy": `${p.dy}px`,
+              animationDelay: `${p.delay}s`,
+            } as React.CSSProperties
+          }
+        >
+          {p.emoji}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 export default function EventPopup({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [open, setOpen] = useState(false);
@@ -34,30 +77,33 @@ export default function EventPopup({ isLoggedIn }: { isLoggedIn: boolean }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="w-full max-w-xs rounded-2xl bg-white p-5 text-center shadow-xl">
-        <p className="text-4xl">🍆🎉</p>
-        <h2 className="mt-2 text-lg font-bold text-zinc-900">가지가지마켓 오픈 기념 이벤트</h2>
-        <p className="mt-2 text-sm text-zinc-600">
-          사이트를 돌아다니다 보이는 가지(🍆)를 클릭하면
-          <br />
-          <span className="font-semibold text-orange-600">100원씩 적립</span>돼요!
-        </p>
-        {!isLoggedIn && (
-          <p className="mt-2 text-xs text-zinc-400">로그인하면 적립을 시작할 수 있어요.</p>
-        )}
-        <div className="mt-4 flex flex-col gap-2">
-          <button
-            onClick={() => close(false)}
-            className="rounded-lg bg-orange-500 py-2 text-sm font-medium text-white transition hover:bg-orange-600"
-          >
-            확인!
-          </button>
-          <button onClick={() => close(true)} className="text-xs text-zinc-400 underline">
-            오늘 하루 안 보기
-          </button>
+    <>
+      <Fireworks />
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+        <div className="w-full max-w-xs rounded-2xl bg-white p-5 text-center shadow-xl">
+          <p className="text-4xl">🍆🎉</p>
+          <h2 className="mt-2 text-lg font-bold text-zinc-900">가지가지마켓 오픈 기념 이벤트</h2>
+          <p className="mt-2 text-sm text-zinc-600">
+            사이트를 돌아다니다 보이는 가지(🍆)를 클릭하면
+            <br />
+            <span className="font-semibold text-orange-600">100원씩 적립</span>돼요!
+          </p>
+          {!isLoggedIn && (
+            <p className="mt-2 text-xs text-zinc-400">로그인하면 적립을 시작할 수 있어요.</p>
+          )}
+          <div className="mt-4 flex flex-col gap-2">
+            <button
+              onClick={() => close(false)}
+              className="rounded-lg bg-orange-500 py-2 text-sm font-medium text-white transition hover:bg-orange-600"
+            >
+              확인!
+            </button>
+            <button onClick={() => close(true)} className="text-xs text-zinc-400 underline">
+              오늘 하루 안 보기
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
