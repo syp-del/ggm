@@ -44,6 +44,8 @@ export default async function Home({
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
       <HeroCarousel items={heroItems} />
 
+      <hr className="mb-4 border-t border-zinc-200" />
+
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-lg font-bold text-zinc-900">우리 동네 중고거래</h1>
         <Link
@@ -53,6 +55,8 @@ export default async function Home({
           + 글쓰기
         </Link>
       </div>
+
+      <hr className="mb-4 border-t border-zinc-200" />
 
       <div className="mb-4 flex flex-wrap gap-2">
         <Link
@@ -80,6 +84,8 @@ export default async function Home({
           </Link>
         ))}
       </div>
+
+      <hr className="mb-4 border-t border-zinc-200" />
 
       {products && products.length > 0 ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
