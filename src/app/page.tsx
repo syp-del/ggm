@@ -76,7 +76,7 @@ export default async function Home({
         </div>
       ) : (
         <div className="flex flex-col items-center gap-2 py-24 text-center text-zinc-500">
-          <span className="text-4xl">🍠</span>
+          <span className="text-4xl">🍆</span>
           <p>
             {activeCategory ? "이 카테고리엔 등록된 상품이 없어요." : "아직 등록된 상품이 없어요."}
           </p>

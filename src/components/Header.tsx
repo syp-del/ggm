@@ -20,8 +20,8 @@ export default async function Header() {
     <header className="sticky top-0 z-10 border-b border-orange-100 bg-white/90 backdrop-blur">
       <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-1.5 text-lg font-bold text-orange-600">
-          <span aria-hidden>🍠</span>
-          <span>고구마마켓</span>
+          <span aria-hidden>🍆</span>
+          <span>가지가지 마켓</span>
         </Link>
 
         {user ? (

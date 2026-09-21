@@ -30,7 +30,7 @@ export default function ProductCard({ id, title, price, status, imagePath }: Pro
             unoptimized={isPlaceholderImageUrl(imageUrl)}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-3xl">🍠</div>
+          <div className="flex h-full w-full items-center justify-center text-3xl">🍆</div>
         )}
         {status !== "판매중" && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/45">

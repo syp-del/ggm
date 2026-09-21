@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "고구마마켓",
-  description: "동네 중고거래, 고구마마켓",
+  title: "가지가지 마켓",
+  description: "동네 중고거래, 가지가지 마켓",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

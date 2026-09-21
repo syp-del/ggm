@@ -44,7 +44,7 @@ export default async function ProductDetailPage({
             unoptimized={isPlaceholderImageUrl(imageUrl)}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-5xl">🍠</div>
+          <div className="flex h-full w-full items-center justify-center text-5xl">🍆</div>
         )}
       </div>
 
