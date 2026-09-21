@@ -1,9 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { deleteProduct } from "@/app/actions/products";
+import { deleteProduct, updateProductStatus } from "@/app/actions/products";
 import { formatPrice } from "@/lib/format";
-import { productImageUrl } from "@/lib/images";
+import { productImageUrl, isPlaceholderImageUrl } from "@/lib/images";
+import { PRODUCT_STATUSES } from "@/lib/categories";
 
 export default async function ProductDetailPage({
   params,
@@ -39,6 +41,7 @@ export default async function ProductDetailPage({
             fill
             sizes="(max-width: 768px) 100vw, 768px"
             className="object-cover"
+            unoptimized={isPlaceholderImageUrl(imageUrl)}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-5xl">🍠</div>
@@ -61,14 +64,45 @@ export default async function ProductDetailPage({
       </div>
 
       {isOwner && (
-        <form action={deleteProduct.bind(null, product.id)} className="mt-6">
-          <button
-            type="submit"
-            className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-          >
-            삭제하기
-          </button>
-        </form>
+        <>
+          <div className="mt-6 flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-zinc-500">거래 상태 변경</span>
+            <div className="flex gap-2">
+              {PRODUCT_STATUSES.map((status) => (
+                <form key={status} action={updateProductStatus.bind(null, product.id, status)}>
+                  <button
+                    type="submit"
+                    disabled={product.status === status}
+                    className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
+                      product.status === status
+                        ? "bg-orange-500 text-white"
+                        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                    }`}
+                  >
+                    {status}
+                  </button>
+                </form>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4 flex gap-2">
+            <Link
+              href={`/products/${product.id}/edit`}
+              className="rounded-lg border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
+            >
+              수정하기
+            </Link>
+            <form action={deleteProduct.bind(null, product.id)}>
+              <button
+                type="submit"
+                className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+              >
+                삭제하기
+              </button>
+            </form>
+          </div>
+        </>
       )}
     </div>
   );

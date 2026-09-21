@@ -29,9 +29,9 @@ export default async function Header() {
             <Link href="/products/new" className="font-medium text-orange-600">
               판매하기
             </Link>
-            <span className="text-zinc-600">
+            <Link href="/profile" className="text-zinc-600 hover:text-zinc-900">
               <span className="font-medium text-zinc-900">{nickname}</span>님
-            </span>
+            </Link>
             <form action={logout}>
               <button
                 type="submit"

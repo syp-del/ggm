@@ -13,3 +13,7 @@ export const CATEGORIES = [
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
+
+export const PRODUCT_STATUSES = ["판매중", "예약중", "거래완료"] as const;
+
+export type ProductStatus = (typeof PRODUCT_STATUSES)[number];

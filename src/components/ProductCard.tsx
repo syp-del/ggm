@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/lib/format";
-import { productImageUrl } from "@/lib/images";
+import { productImageUrl, isPlaceholderImageUrl } from "@/lib/images";
 
 type Props = {
   id: string;
@@ -27,6 +27,7 @@ export default function ProductCard({ id, title, price, status, imagePath }: Pro
             fill
             sizes="(max-width: 640px) 50vw, 300px"
             className="object-cover"
+            unoptimized={isPlaceholderImageUrl(imageUrl)}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-3xl">🍠</div>
