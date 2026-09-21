@@ -7,6 +7,7 @@ export default async function Header() {
   const { data: { user } } = await supabase.auth.getUser();
 
   let nickname: string | null = null;
+  let totalRevenue = 0;
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -14,6 +15,13 @@ export default async function Header() {
       .eq("id", user.id)
       .single();
     nickname = profile?.nickname ?? user.email ?? "회원";
+
+    const { data: soldProducts } = await supabase
+      .from("products")
+      .select("price")
+      .eq("seller_id", user.id)
+      .eq("status", "거래완료");
+    totalRevenue = (soldProducts ?? []).reduce((sum, p) => sum + p.price, 0);
   }
 
   return (
@@ -26,6 +34,9 @@ export default async function Header() {
 
         {user ? (
           <div className="flex items-center gap-3 text-sm">
+            <span className="font-semibold text-emerald-600">
+              +{totalRevenue.toLocaleString("ko-KR")}원
+            </span>
             <Link href="/products/new" className="font-medium text-orange-600">
               판매하기
             </Link>

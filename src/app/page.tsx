@@ -35,7 +35,7 @@ export default async function Home({
         </Link>
       </div>
 
-      <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
+      <div className="mb-4 flex flex-wrap gap-2">
         <Link
           href="/"
           className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition ${
