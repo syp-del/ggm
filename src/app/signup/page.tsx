@@ -26,6 +26,14 @@ export default async function SignupPage({
           className="rounded-lg border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-orange-400"
         />
         <input
+          type="text"
+          name="region"
+          placeholder="지역 (예: 서울 강남구)"
+          required
+          maxLength={30}
+          className="rounded-lg border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-orange-400"
+        />
+        <input
           type="email"
           name="email"
           placeholder="이메일"

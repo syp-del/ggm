@@ -15,7 +15,7 @@ export default async function ProfilePage({
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("nickname")
+    .select("nickname, region")
     .eq("id", user.id)
     .single();
 
@@ -51,6 +51,19 @@ export default async function ProfilePage({
             defaultValue={profile?.nickname ?? ""}
             required
             maxLength={20}
+            className="rounded-lg border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-orange-400"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-zinc-700">지역</label>
+          <input
+            type="text"
+            name="region"
+            defaultValue={profile?.region ?? ""}
+            placeholder="예: 서울 강남구"
+            required
+            maxLength={30}
             className="rounded-lg border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-orange-400"
           />
         </div>

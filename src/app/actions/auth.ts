@@ -7,8 +7,9 @@ export async function signup(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const nickname = String(formData.get("nickname") ?? "").trim();
+  const region = String(formData.get("region") ?? "").trim();
 
-  if (!email || !password || !nickname) {
+  if (!email || !password || !nickname || !region) {
     redirect("/signup?error=" + encodeURIComponent("모든 항목을 입력해주세요."));
   }
 
@@ -17,7 +18,7 @@ export async function signup(formData: FormData) {
     email,
     password,
     options: {
-      data: { nickname },
+      data: { nickname, region },
     },
   });
 

@@ -9,14 +9,15 @@ export async function updateProfile(formData: FormData) {
   if (!user) redirect("/login");
 
   const nickname = String(formData.get("nickname") ?? "").trim();
+  const region = String(formData.get("region") ?? "").trim();
 
-  if (!nickname) {
-    redirect("/profile?error=" + encodeURIComponent("닉네임을 입력해주세요."));
+  if (!nickname || !region) {
+    redirect("/profile?error=" + encodeURIComponent("닉네임과 지역을 입력해주세요."));
   }
 
   const { error } = await supabase
     .from("profiles")
-    .update({ nickname })
+    .update({ nickname, region })
     .eq("id", user.id);
 
   if (error) {

@@ -27,6 +27,13 @@ export async function createProduct(formData: FormData) {
     redirect("/products/new?error=" + encodeURIComponent("제목을 입력해주세요."));
   }
 
+  const { data: sellerProfile } = await supabase
+    .from("profiles")
+    .select("region")
+    .eq("id", user.id)
+    .single();
+  const region = sellerProfile?.region ?? "지역 미설정";
+
   let imagePath: string | null = null;
   if (file && file.size > 0) {
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
@@ -54,6 +61,7 @@ export async function createProduct(formData: FormData) {
       description,
       price,
       category,
+      region,
       image_path: imagePath,
     })
     .select("id")

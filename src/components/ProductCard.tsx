@@ -9,9 +9,10 @@ type Props = {
   price: number;
   status: string;
   imagePath: string | null;
+  region?: string;
 };
 
-export default function ProductCard({ id, title, price, status, imagePath }: Props) {
+export default function ProductCard({ id, title, price, status, imagePath, region }: Props) {
   const imageUrl = productImageUrl(imagePath);
 
   return (
@@ -43,6 +44,7 @@ export default function ProductCard({ id, title, price, status, imagePath }: Pro
       <div className="flex flex-col gap-0.5">
         <p className="line-clamp-1 text-sm text-zinc-800">{title}</p>
         <p className="text-sm font-semibold text-zinc-900">{formatPrice(price)}</p>
+        {region && <p className="text-xs text-zinc-400">📍 {region}</p>}
       </div>
     </Link>
   );

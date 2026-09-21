@@ -26,7 +26,7 @@ export default async function ProductDetailPage({
   const { data: product } = await supabase
     .from("products")
     .select(
-      `id, title, description, price, category, status, image_path, seller_id, buyer_id,
+      `id, title, description, price, category, status, image_path, region, seller_id, buyer_id,
        seller:profiles!products_seller_id_fkey(nickname),
        buyer:profiles!products_buyer_id_fkey(nickname)`
     )
@@ -69,6 +69,7 @@ export default async function ProductDetailPage({
         <div className="flex items-center gap-2 text-xs text-zinc-500">
           <span className="rounded-full bg-zinc-100 px-2 py-0.5">{product.category}</span>
           <span>{nickname}</span>
+          <span>📍 {product.region}</span>
         </div>
         <h1 className="text-lg font-bold text-zinc-900">{product.title}</h1>
         <p className="text-xl font-bold text-zinc-900">{formatPrice(product.price)}</p>

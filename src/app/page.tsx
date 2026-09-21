@@ -8,22 +8,38 @@ import { productImageUrl } from "@/lib/images";
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; region?: string }>;
 }) {
-  const { category } = await searchParams;
+  const { category, region } = await searchParams;
   const activeCategory = (CATEGORIES as readonly string[]).includes(category ?? "")
     ? (category as string)
     : null;
 
   const supabase = await createClient();
-  const productsQuery = supabase
+
+  const { data: regionRows } = await supabase.from("products").select("region");
+  const regions = Array.from(new Set((regionRows ?? []).map((r) => r.region))).sort();
+  const activeRegion = regions.includes(region ?? "") ? (region as string) : null;
+
+  function buildHref(next: { category?: string | null; region?: string | null }) {
+    const params = new URLSearchParams();
+    const nextCategory = next.category !== undefined ? next.category : activeCategory;
+    const nextRegion = next.region !== undefined ? next.region : activeRegion;
+    if (nextCategory) params.set("category", nextCategory);
+    if (nextRegion) params.set("region", nextRegion);
+    const qs = params.toString();
+    return qs ? `/?${qs}` : "/";
+  }
+
+  let productsQuery = supabase
     .from("products")
-    .select("id, title, price, status, image_path")
+    .select("id, title, price, status, image_path, region")
     .order("created_at", { ascending: false });
 
-  const { data: products } = activeCategory
-    ? await productsQuery.eq("category", activeCategory)
-    : await productsQuery;
+  if (activeCategory) productsQuery = productsQuery.eq("category", activeCategory);
+  if (activeRegion) productsQuery = productsQuery.eq("region", activeRegion);
+
+  const { data: products } = await productsQuery;
 
   const { data: heroProducts } = await supabase
     .from("products")
@@ -58,9 +74,9 @@ export default async function Home({
 
       <hr className="mb-4 border-t border-zinc-200" />
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-3 flex flex-wrap gap-2">
         <Link
-          href="/"
+          href={buildHref({ category: null })}
           className={`flex shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition ${
             !activeCategory
               ? "bg-orange-500 text-white"
@@ -72,7 +88,7 @@ export default async function Home({
         {CATEGORIES.map((c) => (
           <Link
             key={c}
-            href={`/?category=${encodeURIComponent(c)}`}
+            href={buildHref({ category: c })}
             className={`flex shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition ${
               activeCategory === c
                 ? "bg-orange-500 text-white"
@@ -84,6 +100,35 @@ export default async function Home({
           </Link>
         ))}
       </div>
+
+      {regions.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          <Link
+            href={buildHref({ region: null })}
+            className={`flex shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition ${
+              !activeRegion
+                ? "bg-purple-500 text-white"
+                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+            }`}
+          >
+            <span aria-hidden>📍</span>전체 지역
+          </Link>
+          {regions.map((r) => (
+            <Link
+              key={r}
+              href={buildHref({ region: r })}
+              className={`flex shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition ${
+                activeRegion === r
+                  ? "bg-purple-500 text-white"
+                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+              }`}
+            >
+              <span aria-hidden>📍</span>
+              {r}
+            </Link>
+          ))}
+        </div>
+      )}
 
       <hr className="mb-4 border-t border-zinc-200" />
 
@@ -97,6 +142,7 @@ export default async function Home({
               price={product.price}
               status={product.status}
               imagePath={product.image_path}
+              region={product.region}
             />
           ))}
         </div>
@@ -104,9 +150,11 @@ export default async function Home({
         <div className="flex flex-col items-center gap-2 py-24 text-center text-zinc-500">
           <span className="text-4xl">🍆</span>
           <p>
-            {activeCategory ? "이 카테고리엔 등록된 상품이 없어요." : "아직 등록된 상품이 없어요."}
+            {activeCategory || activeRegion
+              ? "조건에 맞는 상품이 없어요."
+              : "아직 등록된 상품이 없어요."}
           </p>
-          {!activeCategory && <p>첫 상품을 등록해보세요!</p>}
+          {!activeCategory && !activeRegion && <p>첫 상품을 등록해보세요!</p>}
         </div>
       )}
     </div>
