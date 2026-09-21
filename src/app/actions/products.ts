@@ -153,7 +153,39 @@ export async function updateProductStatus(id: string, status: string) {
     redirect("/");
   }
 
-  await supabase.from("products").update({ status }).eq("id", id);
+  const updates: { status: string; buyer_id?: null } = { status };
+  if (status === "판매중") {
+    updates.buyer_id = null;
+  }
+  await supabase.from("products").update(updates).eq("id", id);
+
+  redirect(`/products/${id}`);
+}
+
+export async function requestPurchase(id: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.rpc("request_purchase", { product_id: id });
+
+  if (error) {
+    redirect(`/products/${id}?error=` + encodeURIComponent(error.message));
+  }
+
+  redirect(`/products/${id}`);
+}
+
+export async function cancelPurchaseRequest(id: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.rpc("cancel_purchase_request", { product_id: id });
+
+  if (error) {
+    redirect(`/products/${id}?error=` + encodeURIComponent(error.message));
+  }
 
   redirect(`/products/${id}`);
 }
