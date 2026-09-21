@@ -8,13 +8,15 @@ export default async function Header() {
 
   let nickname: string | null = null;
   let totalRevenue = 0;
+  let points = 0;
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("nickname")
+      .select("nickname, points")
       .eq("id", user.id)
       .single();
     nickname = profile?.nickname ?? user.email ?? "회원";
+    points = profile?.points ?? 0;
 
     const { data: soldProducts } = await supabase
       .from("products")
@@ -33,14 +35,17 @@ export default async function Header() {
         </Link>
 
         {user ? (
-          <div className="flex items-center gap-3 text-sm">
-            <span className="font-semibold text-emerald-600">
+          <div className="flex flex-wrap items-center justify-end gap-2 text-sm">
+            <span className="whitespace-nowrap font-semibold text-emerald-600">
               +{totalRevenue.toLocaleString("ko-KR")}원
             </span>
-            <Link href="/products/new" className="font-medium text-orange-600">
+            <span className="whitespace-nowrap font-semibold text-purple-600">
+              🍆 {points.toLocaleString("ko-KR")}원
+            </span>
+            <Link href="/products/new" className="whitespace-nowrap font-medium text-orange-600">
               판매하기
             </Link>
-            <Link href="/profile" className="text-zinc-600 hover:text-zinc-900">
+            <Link href="/profile" className="whitespace-nowrap text-zinc-600 hover:text-zinc-900">
               <span className="font-medium text-zinc-900">{nickname}</span>님
             </Link>
             <form action={logout}>

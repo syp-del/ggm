@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header";
+import EventLayer from "@/components/EventLayer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,9 +25,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-orange-50/40">
+      <body className="min-h-full flex flex-col">
+        <div className="ggm-bg" aria-hidden />
         <Header />
         <main className="flex flex-1 flex-col">{children}</main>
+        <EventLayer />
       </body>
     </html>
   );
